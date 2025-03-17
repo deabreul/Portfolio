@@ -3,7 +3,7 @@ window.onload = function() {
     type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
-    backgroundColor: '#87CEEB',
+    // backgroundColor: '#87CEEB',
     physics: {
       default: 'arcade',
       arcade: {
@@ -50,82 +50,38 @@ window.onload = function() {
   }
 
   function create() {
-    this.physics.world.setBounds(0, 0, 4000, 1600);
-    this.cameras.main.setBounds(0, 0, 4000, 1600);
+    this.physics.world.setBounds(0, 0, 4000, 1080);
+    this.cameras.main.setBounds(0, 0, 4000, 1080);
 
     // Fonds parallax
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'background').setOrigin(0.5, 0.5).setDepth(-6);
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'second').setOrigin(0.5, 0.5).setDepth(-5);
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'third').setOrigin(0.5, 0.5).setDepth(-4);
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'fourth').setOrigin(0.5, 0.5).setDepth(-3);
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'fifth').setOrigin(0.5, 0.5).setDepth(-2);
-    this.sky = this.add.tileSprite(2000, 800, 4000, 1600, 'foreground').setOrigin(0.5, 0.5).setDepth(-1);
+    const gameHeight = 1080; // Hauteur du monde
+    background = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'background').setOrigin(0.5, 0.5).setDepth(-6);
+    second = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'second').setOrigin(0.5, 0.5).setDepth(-5);
+    third = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'third').setOrigin(0.5, 0.5).setDepth(-4);
+    fourth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fourth').setOrigin(0.5, 0.5).setDepth(-3);
+    fifth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-2);
+    foreground = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-1);
 
     // Plateformes
     platforms = this.physics.add.staticGroup();
-
-    // Sol
-    let ground = this.add.rectangle(2000, 1300, 4000, 40, 0x654321);
+    let ground = this.add.rectangle(2000, 1080, 4000, 40, 0x654321); // Sol au bas du monde
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
-    // Murs aux extrémités
-    let leftWall = this.add.rectangle(0, 800, 20, 1600, 0x654321);
-    this.physics.add.existing(leftWall, true);
-    platforms.add(leftWall);
-
-    let rightWall = this.add.rectangle(4000, 800, 20, 1600, 0x654321);
-    this.physics.add.existing(rightWall, true);
-    platforms.add(rightWall);
-
-    // Plateformes basses (zones sous le spawn)
-    let lowPlatform1 = this.add.rectangle(500, 1500, 300, 20, 0x654321); // À gauche
-    this.physics.add.existing(lowPlatform1, true);
-    platforms.add(lowPlatform1);
-
-    let lowPlatform2 = this.add.rectangle(3500, 1500, 300, 20, 0x654321); // À droite
-    this.physics.add.existing(lowPlatform2, true);
-    platforms.add(lowPlatform2);
-
-    // Plateformes intermédiaires et hautes
-    let platform1 = this.add.rectangle(300, 1100, 200, 20, 0x654321); // Près du spawn, à gauche
+    let platform1 = this.add.rectangle(200, 900, 150, 20, 0x654321);
     this.physics.add.existing(platform1, true);
     platforms.add(platform1);
 
-    let platform2 = this.add.rectangle(700, 1000, 250, 20, 0x654321); // Un peu plus haut
+    let platform2 = this.add.rectangle(600, 700, 150, 20, 0x654321);
     this.physics.add.existing(platform2, true);
     platforms.add(platform2);
 
-    let platform3 = this.add.rectangle(1100, 900, 200, 20, 0x654321);
+    let platform3 = this.add.rectangle(1200, 500, 150, 20, 0x654321);
     this.physics.add.existing(platform3, true);
     platforms.add(platform3);
 
-    let platform4 = this.add.rectangle(1500, 800, 300, 20, 0x654321); // Centre, plus haut
-    this.physics.add.existing(platform4, true);
-    platforms.add(platform4);
-
-    let platform5 = this.add.rectangle(1900, 900, 200, 20, 0x654321);
-    this.physics.add.existing(platform5, true);
-    platforms.add(platform5);
-
-    let platform6 = this.add.rectangle(2300, 1000, 250, 20, 0x654321);
-    this.physics.add.existing(platform6, true);
-    platforms.add(platform6);
-
-    let platform7 = this.add.rectangle(2700, 900, 200, 20, 0x654321);
-    this.physics.add.existing(platform7, true);
-    platforms.add(platform7);
-
-    let platform8 = this.add.rectangle(3100, 800, 300, 20, 0x654321); // Vers la fin
-    this.physics.add.existing(platform8, true);
-    platforms.add(platform8);
-
-    let platform9 = this.add.rectangle(3500, 700, 200, 20, 0x654321); // Plus haut à droite
-    this.physics.add.existing(platform9, true);
-    platforms.add(platform9)
-
     // Joueur
-    player = this.physics.add.sprite(200, 1200, 'player');
+    player = this.physics.add.sprite(200, 1000, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0.1);
     this.physics.add.collider(player, platforms);
@@ -222,6 +178,14 @@ window.onload = function() {
         }
       }, this);
     }
+
+    background.tilePositionX = this.cameras.main.scrollX * 0.1; // Très lent
+    second.tilePositionX = this.cameras.main.scrollX * 0.3;
+    third.tilePositionX = this.cameras.main.scrollX * 0.5;
+    fourth.tilePositionX = this.cameras.main.scrollX * 0.7;
+    fifth.tilePositionX = this.cameras.main.scrollX * 0.9;
+    foreground.tilePositionX = this.cameras.main.scrollX * 1.1;
+
   }
 
   // Fonctions pour la modale
