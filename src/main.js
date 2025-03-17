@@ -3,11 +3,12 @@ window.onload = function() {
     type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
+    backgroundColor: '#87CEEB',
     physics: {
       default: 'arcade',
       arcade: {
         gravity: { y: 300 },
-        debug: false // Garde ça pour voir les hitbox
+        debug: true // Garde ça pour voir les hitbox
       }
     },
     scene: {
@@ -31,6 +32,7 @@ window.onload = function() {
   function preload() {
     this.load.image('paper', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
     this.load.image('sign', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
+    this.load.spritesheet('player', '../assets/player_spritesheet2.png', { frameWidth: 64, frameHeight: 64 })
   }
 
   function create() {
@@ -38,7 +40,7 @@ window.onload = function() {
     this.physics.world.setBounds(0, 0, 2000, 1200);
     this.cameras.main.setBounds(0, 0, 2000, 1200);
 
-    // Plateformes
+    // Plateformes -----------------------------------------------------------------------------------------------------
     platforms = this.physics.add.staticGroup();
     let ground = this.add.rectangle(1000, 1180, 2000, 40, 0x654321);
     this.physics.add.existing(ground, true);
@@ -56,18 +58,41 @@ window.onload = function() {
     this.physics.add.existing(platform3, true);
     platforms.add(platform3);
 
-    // Joueur
-    player = this.add.rectangle(100, 1000, 40, 40, 0xff0000);
-    this.physics.add.existing(player);
+    // Joueur ----------------------------------------------------------------------------------------------------------
+    player = this.physics.add.sprite(100, 1100, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0.2);
-
     this.physics.add.collider(player, platforms);
 
-    // Faire suivre la caméra après la création du joueur
+    // Caméra
     this.cameras.main.startFollow(player, true, 0.1, 0.1);
 
-    // Panneaux
+    // Animations ------------------------------------------------------------------------------------------------------
+    this.anims.create({
+      key: 'idle', // Animation de repos
+      frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
+      frameRate: 8,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'walk', // Animation de marche
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+      frameRate: 8,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'jump',
+      frames: this.anims.generateFrameNumbers('player', { start: 3, end: 3 }),
+      frameRate: 10,
+      repeat: 0
+    });
+
+    // Anim par défaut
+    player.anims.play('idle', true);
+
+    // Panneaux --------------------------------------------------------------------------------------------------------
     panels = this.physics.add.staticGroup();
     let sign1 = this.add.sprite(400, 1115, 'sign').setScale(0.2);
     let paper1 = this.add.sprite(400, 1105, 'paper').setScale(0.05);
@@ -79,7 +104,7 @@ window.onload = function() {
     this.physics.add.existing(sign2, true);
     panels.add(sign2);
 
-    // Contrôles
+    // Contrôles -------------------------------------------------------------------------------------------------------
     keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.Z,
       left: Phaser.Input.Keyboard.KeyCodes.Q,
@@ -89,12 +114,14 @@ window.onload = function() {
       interact: Phaser.Input.Keyboard.KeyCodes.A
     });
 
-    // Création de la modale PDF
+    // Ouverture des fichiers ------------------------------------------------------------------------------------------
     createPDFModal();
   }
 
+
+  // Gestion des touches -----------------------------------------------------------------------------------------------
   function update() {
-    player.body.setVelocityX(0);
+    player.body.setVelocityX(0); // Réinitialise par défaut
 
     if (keys.left.isDown) {
       player.body.setVelocityX(-160);
@@ -102,8 +129,28 @@ window.onload = function() {
       player.body.setVelocityX(160);
     }
 
+    // Saut (actif seulement au sol)
     if (Phaser.Input.Keyboard.JustDown(keys.jump) && player.body.touching.down) {
       player.body.setVelocityY(-330);
+    }
+
+    // Gestion du retournement (flipX) selon la direction, même en l’air
+    if (player.body.velocity.x < 0) {
+      player.flipX = true; // Tourne à gauche
+    } else if (player.body.velocity.x > 0) {
+      player.flipX = false; // Tourne à droite
+    }
+
+    // Gestion des animations (après le mouvement)
+    if (!player.body.touching.down) {
+      // En l’air : saut
+      player.anims.play('jump', true);
+    } else if (player.body.velocity.x !== 0) {
+      // Au sol et en mouvement : marche
+      player.anims.play('walk', true);
+    } else {
+      // Au sol et immobile : repos
+      player.anims.play('idle', true);
     }
 
     if (Phaser.Input.Keyboard.JustDown(keys.interact)) {
@@ -115,7 +162,7 @@ window.onload = function() {
     }
   }
 
-  // Fonctions PDF (inchangées)
+  // Fonctions PDF -----------------------------------------------------------------------------------------------------
   function createPDFModal() {
     const modal = document.createElement('div');
     modal.id = 'pdfModal';
