@@ -67,7 +67,7 @@ window.onload = function() {
     // Caméra
     this.cameras.main.startFollow(player, true, 0.1, 0.1);
 
-    // Animations ------------------------------------------------------------------------------------------------------
+    // Animations -----------------------------------------------------------------------------------------------------
     this.anims.create({
       key: 'idle', // Animation de repos
       frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
