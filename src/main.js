@@ -179,12 +179,12 @@ window.onload = function() {
       }, this);
     }
 
-    background.tilePositionX = this.cameras.main.scrollX * 0.1; // Très lent
-    second.tilePositionX = this.cameras.main.scrollX * 0.3;
-    third.tilePositionX = this.cameras.main.scrollX * 0.5;
-    fourth.tilePositionX = this.cameras.main.scrollX * 0.7;
-    fifth.tilePositionX = this.cameras.main.scrollX * 0.9;
-    foreground.tilePositionX = this.cameras.main.scrollX * 1.1;
+    background.tilePositionX = 0; // Très lent
+    second.tilePositionX = this.cameras.main.scrollX * 0.05;
+    third.tilePositionX = this.cameras.main.scrollX * 0.1;
+    fourth.tilePositionX = this.cameras.main.scrollX * 0.2;
+    fifth.tilePositionX = this.cameras.main.scrollX * 0.3;
+    foreground.tilePositionX = 0;
 
   }
 
