@@ -7,8 +7,8 @@ window.onload = function() {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: { y: 300 },
-        debug: true // Garde ça pour voir les hitbox
+        gravity: { y: 100 },
+        debug: true
       }
     },
     scene: {
@@ -17,6 +17,7 @@ window.onload = function() {
       update: update
     }
   };
+
 
   const game = new Phaser.Game(config);
 
@@ -28,19 +29,22 @@ window.onload = function() {
   let platforms;
   let panels;
   let keys;
+  let portfolioData;
 
   function preload() {
     this.load.image('paper', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
     this.load.image('sign', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
-    this.load.spritesheet('player', '../assets/player_spritesheet2.png', { frameWidth: 64, frameHeight: 64 })
+    this.load.image('frame', '../assets/placeholder.jpg'); // Image unique pour "image" (à créer)
+    this.load.image('play', '../assets/placeholder.jpg'); // Image unique pour "youtube" (à créer)
+    this.load.spritesheet('player', '../assets/player_spritesheet2.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.json('portfolio', '../assets/portfolio.json');
   }
 
   function create() {
-    // Définir les limites du monde et de la caméra
     this.physics.world.setBounds(0, 0, 2000, 1200);
     this.cameras.main.setBounds(0, 0, 2000, 1200);
 
-    // Plateformes -----------------------------------------------------------------------------------------------------
+    // Plateformes
     platforms = this.physics.add.staticGroup();
     let ground = this.add.rectangle(1000, 1180, 2000, 40, 0x654321);
     this.physics.add.existing(ground, true);
@@ -58,25 +62,24 @@ window.onload = function() {
     this.physics.add.existing(platform3, true);
     platforms.add(platform3);
 
-    // Joueur ----------------------------------------------------------------------------------------------------------
+    // Joueur
     player = this.physics.add.sprite(100, 1100, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0.2);
     this.physics.add.collider(player, platforms);
 
-    // Caméra
     this.cameras.main.startFollow(player, true, 0.1, 0.1);
 
-    // Animations -----------------------------------------------------------------------------------------------------
+    // Animations
     this.anims.create({
-      key: 'idle', // Animation de repos
+      key: 'idle',
       frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
       frameRate: 8,
       repeat: -1
     });
 
     this.anims.create({
-      key: 'walk', // Animation de marche
+      key: 'walk',
       frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
       frameRate: 5,
       repeat: -1
@@ -89,22 +92,29 @@ window.onload = function() {
       repeat: 0
     });
 
-    // Anim par défaut
     player.anims.play('idle', true);
 
-    // Panneaux --------------------------------------------------------------------------------------------------------
-    panels = this.physics.add.staticGroup();
-    let sign1 = this.add.sprite(400, 1115, 'sign').setScale(0.2);
-    let paper1 = this.add.sprite(400, 1105, 'paper').setScale(0.05);
-    this.physics.add.existing(sign1, true);
-    panels.add(sign1);
+    // Panneaux
+    portfolioData = this.cache.json.get('portfolio');
+    if (portfolioData) {
+      panels = this.physics.add.staticGroup();
+      portfolioData.forEach((item, index) => {
+        let x, y;
+        if (index === 0) { x = 200; y = 900; } // Sur platform1
+        else if (index === 1) { x = 600; y = 700; } // Sur platform2
+        else { x = 1200; y = 500; } // Sur platform3
+        let panel = this.add.sprite(x, y - 20, item.sprite).setScale(0.2); // -20 pour être au-dessus
+        this.physics.add.existing(panel, true);
+        panels.add(panel);
+        if (item.type === 'pdf') {
+          this.add.sprite(x, y - 30, 'paper').setScale(0.05);
+        }
+      });
+    } else {
+      console.error("Erreur : portfolio.json n'a pas été chargé correctement.");
+    }
 
-    let sign2 = this.add.sprite(1200, 460, 'sign').setScale(0.5);
-    let paper2 = this.add.sprite(1200, 450, 'paper').setScale(0.3);
-    this.physics.add.existing(sign2, true);
-    panels.add(sign2);
-
-    // Contrôles -------------------------------------------------------------------------------------------------------
+    // Contrôles
     keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.Z,
       left: Phaser.Input.Keyboard.KeyCodes.Q,
@@ -114,14 +124,11 @@ window.onload = function() {
       interact: Phaser.Input.Keyboard.KeyCodes.A
     });
 
-    // Ouverture des fichiers ------------------------------------------------------------------------------------------
-    createPDFModal();
+    createPortfolioModal();
   }
 
-
-  // Gestion des touches -----------------------------------------------------------------------------------------------
   function update() {
-    player.body.setVelocityX(0); // Réinitialise par défaut
+    player.body.setVelocityX(0);
 
     if (keys.left.isDown) {
       player.body.setVelocityX(-160);
@@ -129,109 +136,127 @@ window.onload = function() {
       player.body.setVelocityX(160);
     }
 
-    // Saut (actif seulement au sol)
     if (Phaser.Input.Keyboard.JustDown(keys.jump) && player.body.touching.down) {
       player.body.setVelocityY(-330);
     }
 
-    // Gestion du retournement (flipX) selon la direction, même en l’air
     if (player.body.velocity.x < 0) {
-      player.flipX = true; // Tourne à gauche
+      player.flipX = true;
     } else if (player.body.velocity.x > 0) {
-      player.flipX = false; // Tourne à droite
+      player.flipX = false;
     }
 
-    // Gestion des animations (après le mouvement)
     if (!player.body.touching.down) {
-      // En l’air : saut
       player.anims.play('jump', true);
     } else if (player.body.velocity.x !== 0) {
-      // Au sol et en mouvement : marche
       player.anims.play('walk', true);
     } else {
-      // Au sol et immobile : repos
       player.anims.play('idle', true);
     }
 
     if (Phaser.Input.Keyboard.JustDown(keys.interact)) {
       panels.children.each(function(panel) {
         if (Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), panel.getBounds())) {
-          showPDFModal();
+          let item = portfolioData.find(i => i.sprite === panel.texture.key);
+          if (item) {
+            showPortfolioModal(item); // Passe l'item correspondant
+          }
         }
       }, this);
     }
   }
 
-  // Fonctions PDF -----------------------------------------------------------------------------------------------------
-  function createPDFModal() {
+  // Fonctions pour la modale
+  function createPortfolioModal() {
     const modal = document.createElement('div');
-    modal.id = 'pdfModal';
+    modal.id = 'portfolioModal';
     modal.style.cssText = `
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0, 0, 0, 0.8);
-          display: none;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        `;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    `;
 
     const content = document.createElement('div');
     content.style.cssText = `
-          position: relative;
-          width: 80%;
-          height: 80%;
-          background: white;
-          padding: 20px;
-        `;
+      position: relative;
+      width: 80%;
+      height: 80%;
+      background: white;
+      padding: 20px;
+    `;
 
     const closeButton = document.createElement('span');
     closeButton.innerHTML = '✖';
     closeButton.style.cssText = `
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          font-size: 24px;
-          color: black;
-          cursor: pointer;
-        `;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: black;
+      cursor: pointer;
+    `;
 
-    const iframe = document.createElement('iframe');
-    iframe.id = 'pdfIframe';
-    iframe.style.cssText = `
-          width: 100%;
-          height: 100%;
-          border: none;
-        `;
+    const display = document.createElement('iframe');
+    display.id = 'portfolioDisplay';
+    display.style.cssText = `
+      width: 100%;
+      height: 100%;
+      border: none;
+    `;
 
     content.appendChild(closeButton);
-    content.appendChild(iframe);
+    content.appendChild(display);
     modal.appendChild(content);
     document.body.appendChild(modal);
 
-    closeButton.onclick = hidePDFModal;
+    closeButton.onclick = hidePortfolioModal;
     modal.onclick = (e) => {
-      if (e.target === modal) hidePDFModal();
+      if (e.target === modal) hidePortfolioModal();
     };
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'a' && modal.style.display === 'flex') hidePDFModal();
+      if (e.key === 'a' && modal.style.display === 'flex') hidePortfolioModal();
     });
   }
 
-  function showPDFModal() {
-    const modal = document.getElementById('pdfModal');
-    const iframe = document.getElementById('pdfIframe');
-    iframe.src = '../assets/DeAbreu_Louanne_CV.pdf'; // Vérifie ce chemin
+  function showPortfolioModal(item) {
+    const modal = document.getElementById('portfolioModal');
+    const display = document.getElementById('portfolioDisplay');
+
+    if (item.type === 'pdf') {
+      display.src = item.path;
+    } else if (item.type === 'image') {
+      display.remove();
+      const img = document.createElement('img');
+      img.id = 'portfolioDisplay';
+      img.src = item.path;
+      img.style.cssText = 'width: 100%; height: 100%; object-fit: contain;';
+      modal.querySelector('div').appendChild(img);
+    } else if (item.type === 'youtube') {
+      display.src = item.path;
+    }
+
     modal.style.display = 'flex';
   }
 
-  function hidePDFModal() {
-    const modal = document.getElementById('pdfModal');
+  function hidePortfolioModal() {
+    const modal = document.getElementById('portfolioModal');
+    const display = document.getElementById('portfolioDisplay');
     modal.style.display = 'none';
-    const iframe = document.getElementById('pdfIframe');
-    iframe.src = '';
+    if (display.tagName === 'IMG') {
+      display.remove();
+      const iframe = document.createElement('iframe');
+      iframe.id = 'portfolioDisplay';
+      iframe.style.cssText = 'width: 100%; height: 100%; border: none;';
+      modal.querySelector('div').appendChild(iframe);
+    } else {
+      display.src = '';
+    }
   }
 };

@@ -1,0 +1,5 @@
+[
+  { "name": "CV", "path": "../assets/cv.pdf", "type": "pdf", "sprite": "sign", "position": [600, 1115] },
+  { "name": "Image", "path": "../assets/art.png", "type": "image", "sprite": "frame", "position": [800, 460] },
+  { "name": "YouTube", "path": "https://youtube.com/embed/abc", "type": "youtube", "sprite": "play", "position": [1200, 460] }
+]
