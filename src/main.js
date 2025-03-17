@@ -77,8 +77,8 @@ window.onload = function() {
 
     this.anims.create({
       key: 'walk', // Animation de marche
-      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
-      frameRate: 8,
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 1 }),
+      frameRate: 5,
       repeat: -1
     });
 
