@@ -1,13 +1,13 @@
 window.onload = function() {
   const config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 600,
+    width: window.innerWidth,
+    height: window.innerHeight,
     physics: {
       default: 'arcade',
       arcade: {
         gravity: { y: 300 },
-        debug: true
+        debug: false // Garde ça pour voir les hitbox
       }
     },
     scene: {
@@ -19,46 +19,67 @@ window.onload = function() {
 
   const game = new Phaser.Game(config);
 
+  window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+  });
+
   let player;
   let platforms;
   let panels;
   let keys;
 
   function preload() {
-    // Chargement des assets pour le panneau Minecraft
-    this.load.image('sign', 'https://i.imgur.com/8kZ5J3X.png'); // Image d'un panneau Minecraft
-    this.load.image('paper', 'https://i.imgur.com/5g8Z9vB.png'); // Image d'une affiche
+    this.load.image('paper', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
+    this.load.image('sign', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
   }
 
   function create() {
-    platforms = this.physics.add.staticGroup();
+    // Définir les limites du monde et de la caméra
+    this.physics.world.setBounds(0, 0, 2000, 1200);
+    this.cameras.main.setBounds(0, 0, 2000, 1200);
 
-    let ground = this.add.rectangle(400, 580, 800, 40, 0x654321);
+    // Plateformes
+    platforms = this.physics.add.staticGroup();
+    let ground = this.add.rectangle(1000, 1180, 2000, 40, 0x654321);
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
-    let platform1 = this.add.rectangle(200, 450, 150, 20, 0x654321);
+    let platform1 = this.add.rectangle(200, 900, 150, 20, 0x654321);
     this.physics.add.existing(platform1, true);
     platforms.add(platform1);
 
-    let platform2 = this.add.rectangle(600, 350, 150, 20, 0x654321);
+    let platform2 = this.add.rectangle(600, 700, 150, 20, 0x654321);
     this.physics.add.existing(platform2, true);
     platforms.add(platform2);
 
-    player = this.add.rectangle(100, 500, 40, 40, 0xff0000);
+    let platform3 = this.add.rectangle(1200, 500, 150, 20, 0x654321);
+    this.physics.add.existing(platform3, true);
+    platforms.add(platform3);
+
+    // Joueur
+    player = this.add.rectangle(100, 1000, 40, 40, 0xff0000);
     this.physics.add.existing(player);
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0.2);
 
     this.physics.add.collider(player, platforms);
 
-    // Création du panneau style Minecraft
-    panels = this.physics.add.staticGroup();
-    let sign = this.add.sprite(400, 540, 'sign').setScale(0.5);
-    let paper = this.add.sprite(400, 530, 'paper').setScale(0.3);
-    this.physics.add.existing(sign, true);
-    panels.add(sign);
+    // Faire suivre la caméra après la création du joueur
+    this.cameras.main.startFollow(player, true, 0.1, 0.1);
 
+    // Panneaux
+    panels = this.physics.add.staticGroup();
+    let sign1 = this.add.sprite(400, 1115, 'sign').setScale(0.2);
+    let paper1 = this.add.sprite(400, 1105, 'paper').setScale(0.05);
+    this.physics.add.existing(sign1, true);
+    panels.add(sign1);
+
+    let sign2 = this.add.sprite(1200, 460, 'sign').setScale(0.5);
+    let paper2 = this.add.sprite(1200, 450, 'paper').setScale(0.3);
+    this.physics.add.existing(sign2, true);
+    panels.add(sign2);
+
+    // Contrôles
     keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.Z,
       left: Phaser.Input.Keyboard.KeyCodes.Q,
@@ -68,7 +89,7 @@ window.onload = function() {
       interact: Phaser.Input.Keyboard.KeyCodes.A
     });
 
-    // Création de l'élément HTML pour le PDF (hors du canvas Phaser)
+    // Création de la modale PDF
     createPDFModal();
   }
 
@@ -94,59 +115,56 @@ window.onload = function() {
     }
   }
 
-  // Création de la fenêtre modale pour le PDF
+  // Fonctions PDF (inchangées)
   function createPDFModal() {
     const modal = document.createElement('div');
     modal.id = 'pdfModal';
     modal.style.cssText = `
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    `;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.8);
+          display: none;
+          justify-content: center;
+          align-items: center;
+          z-index: 1000;
+        `;
 
     const content = document.createElement('div');
     content.style.cssText = `
-      position: relative;
-      width: 80%;
-      height: 80%;
-      background: white;
-      padding: 20px;
-    `;
+          position: relative;
+          width: 80%;
+          height: 80%;
+          background: white;
+          padding: 20px;
+        `;
 
-    // Bouton de fermeture (croix)
     const closeButton = document.createElement('span');
     closeButton.innerHTML = '✖';
     closeButton.style.cssText = `
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 24px;
-      color: black;
-      cursor: pointer;
-    `;
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          font-size: 24px;
+          color: black;
+          cursor: pointer;
+        `;
 
-    // Iframe pour afficher le PDF
     const iframe = document.createElement('iframe');
     iframe.id = 'pdfIframe';
     iframe.style.cssText = `
-      width: 100%;
-      height: 100%;
-      border: none;
-    `;
+          width: 100%;
+          height: 100%;
+          border: none;
+        `;
 
     content.appendChild(closeButton);
     content.appendChild(iframe);
     modal.appendChild(content);
     document.body.appendChild(modal);
 
-    // Événements de fermeture
     closeButton.onclick = hidePDFModal;
     modal.onclick = (e) => {
       if (e.target === modal) hidePDFModal();
@@ -159,9 +177,7 @@ window.onload = function() {
   function showPDFModal() {
     const modal = document.getElementById('pdfModal');
     const iframe = document.getElementById('pdfIframe');
-
-    // Remplacez cette URL par le chemin de votre PDF
-    iframe.src = '../assets/DeAbreu_Louanne_CV.pdf'; // Exemple de PDF
+    iframe.src = '../assets/DeAbreu_Louanne_CV.pdf'; // Vérifie ce chemin
     modal.style.display = 'flex';
   }
 
@@ -169,6 +185,6 @@ window.onload = function() {
     const modal = document.getElementById('pdfModal');
     modal.style.display = 'none';
     const iframe = document.getElementById('pdfIframe');
-    iframe.src = ''; // Réinitialise l'iframe pour éviter de consommer des ressources
+    iframe.src = '';
   }
 };
