@@ -7,7 +7,7 @@ window.onload = function() {
     physics: {
       default: 'arcade',
       arcade: {
-        gravity: { y: 280 },
+        gravity: { y: 300 },
         debug: true
       }
     },
@@ -32,12 +32,14 @@ window.onload = function() {
   let portfolioData;
 
   function preload() {
-    this.load.image('sign', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
-    this.load.image('paper', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
+    this.load.image('paper', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
+    this.load.image('sign', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
     this.load.image('frame', '../assets/placeholder.jpg'); // Image unique pour "image" (à créer)
     this.load.image('play', '../assets/placeholder.jpg'); // Image unique pour "youtube" (à créer)
     this.load.spritesheet('player', '../assets/player_spritesheet3.png', { frameWidth: 64, frameHeight: 64 });
     this.load.json('portfolio', '../assets/portfolio.json');
+
+    this.load.image('house', '../assets/house.png');
 
     // Fonds parallax
     this.load.image('background', '../assets/background/1.png');
@@ -55,37 +57,69 @@ window.onload = function() {
 
     // Fonds parallax
     const gameHeight = 1080; // Hauteur du monde
-    background = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'background').setOrigin(0.5, 0.5).setDepth(-6);
-    second = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'second').setOrigin(0.5, 0.5).setDepth(-5);
-    third = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'third').setOrigin(0.5, 0.5).setDepth(-4);
-    fourth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fourth').setOrigin(0.5, 0.5).setDepth(-3);
-    fifth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-2);
-    foreground = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-1);
+    background = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'background').setOrigin(0.5, 0.5).setDepth(-7);
+    second = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'second').setOrigin(0.5, 0.5).setDepth(-6);
+    third = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'third').setOrigin(0.5, 0.5).setDepth(-5);
+    fourth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fourth').setOrigin(0.5, 0.5).setDepth(-4);
+    fifth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-3);
+    foreground = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-2);
 
     // Plateformes
     platforms = this.physics.add.staticGroup();
-    let ground = this.add.rectangle(2000, 1080, 4000, 40, 0x654321); // Sol au bas du monde
+    let ground = this.add.rectangle(2000, 1080, 4000, 48, 0x654321); // Sol au bas du monde
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
-    let platform1 = this.add.rectangle(200, 900, 150, 20, 0x654321);
+    let platform1 = this.add.rectangle(400, 900, 200, 20, 0x654321);
     this.physics.add.existing(platform1, true);
     platforms.add(platform1);
 
-    let platform2 = this.add.rectangle(600, 700, 150, 20, 0x654321);
+    let platform2 = this.add.rectangle(60, 760, 200, 20, 0x654321);
     this.physics.add.existing(platform2, true);
     platforms.add(platform2);
 
-    let platform3 = this.add.rectangle(1200, 500, 150, 20, 0x654321);
+    let platform3 = this.add.rectangle(500, 600, 200, 20, 0x654321);
     this.physics.add.existing(platform3, true);
     platforms.add(platform3);
+
+    let platform4 = this.add.rectangle(200, 460, 150, 20, 0x654321);
+    this.physics.add.existing(platform4, true);
+    platforms.add(platform4);
+
+    let platform5 = this.add.rectangle(550, 320, 70, 20, 0x654321);
+    this.physics.add.existing(platform5, true);
+    platforms.add(platform5);
+
+    let platform6 = this.add.rectangle(880, 320, 70, 20, 0x654321);
+    this.physics.add.existing(platform6, true);
+    platforms.add(platform6);
+
+    let platform7 = this.add.rectangle(1210, 320, 70, 20, 0x654321);
+    this.physics.add.existing(platform7, true);
+    platforms.add(platform7);
+
+    let platform8 = this.add.rectangle(200, 160, 200, 20, 0x654321);
+    this.physics.add.existing(platform8, true);
+    platforms.add(platform8);
+
+    let platform9 = this.add.rectangle(1540, 320, 70, 20, 0x654321);
+    this.physics.add.existing(platform9, true);
+    platforms.add(platform9);
+
+    let platform10 = this.add.rectangle(1800, 480, 100, 20, 0x654321);
+    this.physics.add.existing(platform10, true);
+    platforms.add(platform10);
 
     // Joueur
     player = this.physics.add.sprite(200, 1000, 'player');
     player.body.setCollideWorldBounds(true);
-    player.body.setBounce(0.1);
+    player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
     this.cameras.main.startFollow(player, true, 0.1, 0.1);
+
+    // Deco
+
+    this.add.sprite(1000, 1059, 'house').setOrigin(0, 1).setScale(1).setDepth(-1);
 
     // Animations
     this.anims.create({
@@ -182,8 +216,8 @@ window.onload = function() {
     background.tilePositionX = 0; // Très lent
     second.tilePositionX = this.cameras.main.scrollX * 0.05;
     third.tilePositionX = this.cameras.main.scrollX * 0.1;
-    fourth.tilePositionX = this.cameras.main.scrollX * 0.2;
-    fifth.tilePositionX = this.cameras.main.scrollX * 0.3;
+    fourth.tilePositionX = this.cameras.main.scrollX * 0.15;
+    fifth.tilePositionX = this.cameras.main.scrollX * 0.2;
     foreground.tilePositionX = 0;
 
   }
