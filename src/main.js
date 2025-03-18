@@ -69,7 +69,7 @@ window.onload = function() {
 
   function preload() {
     // Important
-    this.load.spritesheet('player', '../assets/player_spritesheet3.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('player', '../assets/player_spritesheet.png', { frameWidth: 64, frameHeight: 64 });
     this.load.json('portfolio', '../assets/portfolio.json');
 
     // Visuel interactif
