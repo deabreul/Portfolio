@@ -261,7 +261,7 @@ window.onload = function() {
 
     if (keys.jump.isDown && isJumping && player.body.velocity.y <= 0) {
       // Tant que la touche est maintenue et que le joueur monte
-      if (jumpVelocity > -300) {
+      if (jumpVelocity > -285) {
         jumpVelocity -= 5;
         player.body.setVelocityY(jumpVelocity);
       }
