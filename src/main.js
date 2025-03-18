@@ -1,5 +1,5 @@
 window.onload = function() {
-  // Détection des appareils mobiles
+  // Mobile
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   if (isMobile) {
     const mobileMessage = document.createElement('div');
@@ -31,10 +31,10 @@ window.onload = function() {
       </div>
     `;
     document.body.appendChild(mobileMessage);
-    return; // Arrête l'exécution du reste du code
+    return; // Stop tout
   }
 
-  // Si pas mobile, continue avec le jeu
+  // Si pas mobile on continue
   const config = {
     type: Phaser.AUTO,
     width: window.innerWidth,
@@ -66,7 +66,9 @@ window.onload = function() {
   let keys;
   let portfolioData;
   let isJumping = false;
+  let tooltip;
 
+  // Chargement des assets ---------------------------------------------------------------------------------------------
   function preload() {
     // Important
     this.load.spritesheet('player', '../assets/player_spritesheet.png', { frameWidth: 64, frameHeight: 64 });
@@ -96,6 +98,7 @@ window.onload = function() {
 
   }
 
+  // Créations de tout -------------------------------------------------------------------------------------------------
   function create() {
     this.physics.world.setBounds(0, 0, 3000, 1080);
     this.cameras.main.setBounds(0, 0, 3000, 1080);
@@ -109,12 +112,15 @@ window.onload = function() {
     fifth = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-3);
     foreground = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-2);
 
-    // Plateformes
+    // Plateformes -----------------------------------------------------------------------------------------------------
     platforms = this.physics.add.staticGroup();
+
+    // Sol
     let ground = this.add.tileSprite(1500, 1080, 3000, 48,'ground'); // Sol au bas du monde
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
+    // Plateforme de jeu en bois
     createWoodPlatform.call(this, 400, 900, 200, 20);
     createWoodPlatform.call(this, 60, 760, 200, 20);
     createWoodPlatform.call(this, 500, 600, 200, 20);
@@ -137,6 +143,7 @@ window.onload = function() {
     createWoodPlatform.call(this, 2828 + 16, 384 - 10, 32, 20);
     createWoodPlatform.call(this, 2700 + 16, 256 - 10, 32, 20);
 
+    // Plateforme caché dans la maison pour les hitbox
     let platform13 = this.add.rectangle(1368, 963, 111, 1, 0x0).setOrigin(0, 0);
     this.physics.add.existing(platform13, true);
     platforms.add(platform13);
@@ -150,16 +157,12 @@ window.onload = function() {
     platforms.add(platform15);
 
 
-    // Joueur
+    // Joueur ----------------------------------------------------------------------------------------------------------
     player = this.physics.add.sprite(120, 1000, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
     this.cameras.main.startFollow(player, true, 0.1, 0.1);
-
-    // Deco
-
-    this.add.sprite(1000, 1059, 'house').setOrigin(0, 1).setScale(1).setDepth(-1);
 
     // Animations
     this.anims.create({
@@ -185,7 +188,10 @@ window.onload = function() {
 
     player.anims.play('idle', true);
 
-    // Decoration animation
+    // Deco ------------------------------------------------------------------------------------------------------------
+    this.add.sprite(1000, 1059, 'house').setOrigin(0, 1).setScale(1).setDepth(-1);
+
+    // Animations
     this.anims.create({
       key: 'sign_anim',
       frames: this.anims.generateFrameNumbers('sign', { start: 0, end: 1 }), // Frames 0 à 1
@@ -200,24 +206,24 @@ window.onload = function() {
       repeat: -1 //
     });
 
-    // Détection des clics pour afficher les coordonnées
+    // Afficher les coordonnées ----------------------------------------------------------------------------------------
     this.input.on('pointerdown', (pointer) => {
       const worldX = pointer.worldX; // Coordonnée x dans le monde
       const worldY = pointer.worldY; // Coordonnée y dans le monde
       console.log(`Clic à : x = ${worldX}, y = ${worldY}`);
     });
 
-    // Panneaux avec positions depuis le JSON
+    // Créer les panneaux avec le json ---------------------------------------------------------------------------------
     portfolioData = this.cache.json.get('portfolio');
     if (portfolioData) {
       panels = this.physics.add.staticGroup();
       portfolioData.forEach((item) => {
-        let [x, y] = item.position; // Récupère x et y depuis le JSON
+        let [x, y] = item.position;
         let panel = this.add.sprite(x, y, item.sprite).setOrigin(0, 1).setDepth(-1);
         this.physics.add.existing(panel, true);
         panels.add(panel);
 
-        // Jouer l'animation en fonction du sprite
+        // Animation suivant le sprite
         if (item.sprite === 'sign') {
           panel.anims.play('sign_anim', true);
         } else if (item.sprite === 'fish') {
@@ -229,7 +235,7 @@ window.onload = function() {
       console.error("Erreur : portfolio.json n'a pas été chargé correctement.");
     }
 
-    // Contrôles
+    // Contrôles -------------------------------------------------------------------------------------------------------
     keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.Z,
       left: Phaser.Input.Keyboard.KeyCodes.Q,
@@ -239,29 +245,38 @@ window.onload = function() {
       interact: Phaser.Input.Keyboard.KeyCodes.F
     });
 
+
+
+    tooltip = createTooltip();
     createPortfolioModal();
     createIntroModal();
     createControlsDisplay();
   }
 
   function update() {
+
+    // Déplacement -----------------------------------------------------------------------------------------------------
+
+    // Fixe
     player.body.setVelocityX(0);
 
+    // Gauche Droite
     if (keys.left.isDown) {
       player.body.setVelocityX(-160);
     } else if (keys.right.isDown) {
       player.body.setVelocityX(160);
     }
 
+    // Saut
     if (Phaser.Input.Keyboard.JustDown(keys.jump) && player.body.touching.down) {
       // Début du saut
       isJumping = true;
-      jumpVelocity = -200; // Vélocité initiale (saut court)
+      jumpVelocity = -200; // Saut court
       player.body.setVelocityY(jumpVelocity);
     }
 
     if (keys.jump.isDown && isJumping && player.body.velocity.y <= 0) {
-      // Tant que la touche est maintenue et que le joueur monte
+      // Touche maintenu pour saut long
       if (jumpVelocity > -285) {
         jumpVelocity -= 5;
         player.body.setVelocityY(jumpVelocity);
@@ -273,12 +288,14 @@ window.onload = function() {
       isJumping = false;
     }
 
+    // Tourner le sprite
     if (player.body.velocity.x < 0) {
       player.flipX = true;
     } else if (player.body.velocity.x > 0) {
       player.flipX = false;
     }
 
+    // Choix de l'animation
     if (!player.body.touching.down) {
       player.anims.play('jump', true);
     } else if (player.body.velocity.x !== 0) {
@@ -287,6 +304,7 @@ window.onload = function() {
       player.anims.play('idle', true);
     }
 
+    // Interaction avec les éléments du monde --------------------------------------------------------------------------
     if (Phaser.Input.Keyboard.JustDown(keys.interact)) {
       panels.children.each(function(panel) {
         if (Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), panel.getBounds())) {
@@ -294,13 +312,45 @@ window.onload = function() {
               i.position[0] === panel.x && i.position[1] === panel.y
           );
           if (item) {
-            showPortfolioModal(item); // Passe l'item correspondant
+            showPortfolioModal(item);
           }
         }
       }, this);
     }
 
-    background.tilePositionX = 0; // Très lent
+    // Affichage du tooltip à l'approche -------------------------------------------------------------------------------
+    let tooltipShown = false;
+    panels.children.each(function(panel) {
+      const playerBounds = player.getBounds();
+      const panelBounds = panel.getBounds();
+      if (Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, panelBounds)) {
+        let item = portfolioData.find(i =>
+            i.position[0] === panel.x && i.position[1] === panel.y
+        );
+        if (item && item.name) {
+          // console.log(`Près de ${item.name} à x=${panel.x}, y=${panel.y}`);
+          // console.log(`Taille panneau : width=${panel.width}, height=${panel.height}`);
+          const tooltipX = panel.x + panel.width / 2 - 30;
+          const tooltipY = panel.y - panel.height - 30;
+          const screenX = tooltipX - this.cameras.main.scrollX;
+          const screenY = tooltipY - this.cameras.main.scrollY;
+          // console.log(`Position écran : x=${screenX}, y=${screenY}`);
+          tooltip.style.left = `${screenX}px`;
+          tooltip.style.top = `${screenY}px`;
+          tooltip.textContent = item.name;
+          tooltip.style.display = 'block';
+          // console.log(`Tooltip affiché : ${tooltip.style.display}`);
+          tooltipShown = true;
+        }
+      }
+    }, this);
+
+    if (!tooltipShown) {
+      tooltip.style.display = 'none';
+    }
+
+    // Fond parallaxe --------------------------------------------------------------------------------------------------
+    background.tilePositionX = 0;
     second.tilePositionX = this.cameras.main.scrollX * 0.05;
     third.tilePositionX = this.cameras.main.scrollX * 0.1;
     fourth.tilePositionX = this.cameras.main.scrollX * 0.15;
@@ -309,7 +359,7 @@ window.onload = function() {
 
   }
 
-  // Fonctions pour la modale
+  // Fonctions pour la modale ------------------------------------------------------------------------------------------
   function createPortfolioModal() {
     const modal = document.createElement('div');
     modal.id = 'portfolioModal';
@@ -434,6 +484,8 @@ window.onload = function() {
     overflow-y: auto;
   `;
 
+    // Modale d'accueil ------------------------------------------------------------------------------------------------
+
     const title = document.createElement('h2');
     title.textContent = 'Bienvenue dans mon Portfolio !';
 
@@ -443,7 +495,7 @@ window.onload = function() {
     - Utilise <strong>Q</strong> et <strong>D</strong> pour te déplacer à gauche ou à droite.<br>
     - Appuie sur <strong>ESPACE</strong> pour sauter.<br>
     - Approche toi des éléments du décor et utilise <strong>F</strong> pour interagir.<br>
-    - Explore pour découvrir mes projets (PDF, images, vidéos) !<br><br>
+    - Explore pour découvrir mes projets !<br><br>
     Pour avoir plus d'info, rend toi sur mon site : <a href="https://www.louanne-deabreu.fr">https://www.louanne-deabreu.fr</a><br>
     Et si tu veux me retrouver sur GitHub c'est <a href="https://github.com/deabreul/Portfolio">par ici !</a><br>
   `;
@@ -471,6 +523,7 @@ window.onload = function() {
     };
   }
 
+  // Boite avec les contrôles ------------------------------------------------------------------------------------------
   function createControlsDisplay() {
     const controls = document.createElement('div');
     controls.id = 'controlsDisplay';
@@ -495,8 +548,9 @@ window.onload = function() {
     document.body.appendChild(controls);
   }
 
+  // Fonction pour ajouter le sprite des plateforme --------------------------------------------------------------------
   function createWoodPlatform(x, y, width, height) {
-    const tileSize = 20; // Taille de chaque tuile (20x20)
+    const tileSize = 20;
 
     if (width <= tileSize * 2) {
       // Plateformes très courtes : juste les bords
@@ -523,14 +577,36 @@ window.onload = function() {
       this.physics.add.existing(middle, true);
       platforms.add(middle);
 
-      // Ajuster les hitboxes pour correspondre aux tailles visuelles
+      // Ajuster les hitboxes
       leftEdge.body.setSize(tileSize, height);
       rightEdge.body.setSize(tileSize, height);
       middle.body.setSize(middleWidth, height);
 
-      // Positionner les bords pour qu’ils se touchent exactement
       leftEdge.x = x - (width - tileSize) / 2 - tileSize / 2;
       rightEdge.x = x + (width - tileSize) / 2 + tileSize / 2;
     }
+  }
+
+  // Tooltip -----------------------------------------------------------------------------------------------------------
+  function createTooltip() {
+    const tooltip = document.createElement('div');
+    tooltip.id = 'interactionTooltip';
+    tooltip.style.cssText = `
+    position: absolute;
+    background: lightgreen;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 2px solid forestgreen;
+    font-family: "Poppins", Arial;
+    font-size: 14px;
+    pointer-events: none;
+    display: none;
+    z-index: 1000;
+  `;
+    document.body.appendChild(tooltip);
+    // Forcer un texte initial pour tester
+    tooltip.textContent = 'Test Tooltip';
+    return tooltip;
   }
 };
