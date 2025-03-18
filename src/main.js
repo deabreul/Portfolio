@@ -144,7 +144,7 @@ window.onload = function() {
     this.physics.add.existing(platform18, true);
     platforms.add(platform18);
 
-    let platform19 = this.add.rectangle(2390, 650, 100, 20, 0x654321);
+    let platform19 = this.add.rectangle(2390, 650, 150, 20, 0x654321);
     this.physics.add.existing(platform19, true);
     platforms.add(platform19);
 
@@ -170,7 +170,7 @@ window.onload = function() {
 
 
     // Joueur
-    player = this.physics.add.sprite(1780, 140, 'player');
+    player = this.physics.add.sprite(200, 1000, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
@@ -182,6 +182,7 @@ window.onload = function() {
 
     // Animations
     this.anims.create({
+      key: 'idle',
       key: 'idle',
       frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
       frameRate: 10,
@@ -232,7 +233,7 @@ window.onload = function() {
       panels = this.physics.add.staticGroup();
       portfolioData.forEach((item) => {
         let [x, y] = item.position; // Récupère x et y depuis le JSON
-        let panel = this.add.sprite(x, y, item.sprite);
+        let panel = this.add.sprite(x, y, item.sprite).setOrigin(0, 1).setDepth(-1);
         this.physics.add.existing(panel, true);
         panels.add(panel);
 
@@ -291,7 +292,9 @@ window.onload = function() {
     if (Phaser.Input.Keyboard.JustDown(keys.interact)) {
       panels.children.each(function(panel) {
         if (Phaser.Geom.Intersects.RectangleToRectangle(player.getBounds(), panel.getBounds())) {
-          let item = portfolioData.find(i => i.sprite === panel.texture.key);
+          let item = portfolioData.find(i =>
+              i.position[0] === panel.x && i.position[1] === panel.y
+          );
           if (item) {
             showPortfolioModal(item); // Passe l'item correspondant
           }

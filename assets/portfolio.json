@@ -1,5 +1,10 @@
 [
-  { "name": "CV", "path": "../assets/DeAbreu_Louanne_CV.pdf", "type": "pdf", "sprite": "sign", "position": [600, 1000] },
-  { "name": "Photomontage", "path": "../assets/art.png", "type": "image", "sprite": "fish", "position": [1368, 963] },
-  { "name": "Animation", "path": "https://youtube.com/embed/abc", "type": "youtube", "sprite": "sign", "position": [1200, 460] }
+  { "name": "CV", "path": "https://youtube.com/embed/V_dhDO9PYQ8", "type": "youtube", "sprite": "sign", "position": [547, 590] },
+  { "name": "Photomontage", "path": "../assets/montage.png", "type": "image", "sprite": "fish", "position": [1402, 965] },
+  { "name": "Animation Nintendo DS", "path": "https://www.youtube.com/embed/e91aYGB0t7w?si=bmS0xsKo0rwHWSES", "type": "youtube", "sprite": "sign", "position": [117, 150] },
+  { "name": "Avatar", "path": "../assets/pdp.svg", "type": "image", "sprite": "sign", "position": [2095, 110] },
+  { "name": "Adobe XD", "path": "https://youtube.com/embed/4bSuKP5ciOE", "type": "youtube", "sprite": "sign", "position": [1849, 802] },
+  { "name": "Plushies", "path": "https://www.youtube.com/embed/-5xu28BxoT8?si=5_ThZ3yoBFp2nU6o", "type": "youtube", "sprite": "sign", "position": [1169, 748] },
+  { "name": "GreenFood", "path": "https://www.youtube.com/embed/dtiCD1QtFcA?si=iOQZFMwt0EZ0JdHc", "type": "youtube", "sprite": "sign", "position": [2321, 642] },
+  { "name": "CV", "path": "../assets/poster.jpg", "type": "image", "sprite": "sign", "position": [2931, 106] }
 ]
