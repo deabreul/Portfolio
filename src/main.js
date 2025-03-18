@@ -261,8 +261,8 @@ window.onload = function() {
 
     if (keys.jump.isDown && isJumping && player.body.velocity.y <= 0) {
       // Tant que la touche est maintenue et que le joueur monte
-      if (jumpVelocity > -270) { // Limite à -330 (saut max actuel)
-        jumpVelocity -= 5; // Augmente la vélocité progressivement (ajuste cette valeur)
+      if (jumpVelocity > -300) {
+        jumpVelocity -= 5;
         player.body.setVelocityY(jumpVelocity);
       }
     }
