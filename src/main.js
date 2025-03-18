@@ -151,7 +151,7 @@ window.onload = function() {
 
 
     // Joueur
-    player = this.physics.add.sprite(2700, 120, 'player');
+    player = this.physics.add.sprite(120, 1000, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
