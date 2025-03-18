@@ -37,8 +37,8 @@ window.onload = function() {
     this.load.json('portfolio', '../assets/portfolio.json');
 
     // Visuel interactif
-    this.load.image('sign', '../assets/panneau.png');
-    this.load.image('fish', '../assets/fish.png');
+    this.load.spritesheet('sign', '../assets/panneau.png', { frameWidth: 64, frameHeight: 64 });
+    this.load.spritesheet('fish', '../assets/fish.png', { frameWidth: 64, frameHeight: 64 });
 
     //Visuel
     this.load.image('house', '../assets/house.png');
@@ -204,6 +204,21 @@ window.onload = function() {
 
     player.anims.play('idle', true);
 
+    // Decoration animation
+    this.anims.create({
+      key: 'sign_anim',
+      frames: this.anims.generateFrameNumbers('sign', { start: 0, end: 1 }), // Frames 0 à 1
+      frameRate: 2,
+      repeat: -1
+    });
+
+    this.anims.create({
+      key: 'fish_anim',
+      frames: this.anims.generateFrameNumbers('fish', { start: 0, end: 1 }), // Frames 0 à 1
+      frameRate: 2, //
+      repeat: -1 //
+    });
+
     // Détection des clics pour afficher les coordonnées
     this.input.on('pointerdown', (pointer) => {
       const worldX = pointer.worldX; // Coordonnée x dans le monde
@@ -220,6 +235,14 @@ window.onload = function() {
         let panel = this.add.sprite(x, y, item.sprite);
         this.physics.add.existing(panel, true);
         panels.add(panel);
+
+        // Jouer l'animation en fonction du sprite
+        if (item.sprite === 'sign') {
+          panel.anims.play('sign_anim', true);
+        } else if (item.sprite === 'fish') {
+          panel.anims.play('fish_anim', true);
+        }
+
       });
     } else {
       console.error("Erreur : portfolio.json n'a pas été chargé correctement.");
