@@ -92,6 +92,7 @@ window.onload = function() {
     this.load.image('wood_left', '../assets/textures/wood_left.png');
     this.load.image('wood_middle', '../assets/textures/wood_middle.png');
     this.load.image('wood_right', '../assets/textures/wood_right.png');
+    this.load.image('ground', '../assets/textures/ground.png');
 
   }
 
@@ -110,7 +111,7 @@ window.onload = function() {
 
     // Plateformes
     platforms = this.physics.add.staticGroup();
-    let ground = this.add.rectangle(1500, 1080, 3000, 48, 0x654321); // Sol au bas du monde
+    let ground = this.add.tileSprite(1500, 1080, 3000, 48,'ground'); // Sol au bas du monde
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
