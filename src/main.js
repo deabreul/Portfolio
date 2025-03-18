@@ -65,6 +65,8 @@ window.onload = function() {
   let panels;
   let keys;
   let portfolioData;
+  let jumpStartTime = 0;
+  let isJumping = false;
 
   function preload() {
     // Important
@@ -85,6 +87,12 @@ window.onload = function() {
     this.load.image('fourth', '../assets/background/4.png');
     this.load.image('fifth', '../assets/background/5.png');
     this.load.image('foreground', '../assets/background/6.png');
+
+    // Textures
+
+    this.load.image('wood_left', '../assets/textures/wood_left.png');
+    this.load.image('wood_middle', '../assets/textures/wood_middle.png');
+    this.load.image('wood_right', '../assets/textures/wood_right.png');
 
   }
 
@@ -107,53 +115,27 @@ window.onload = function() {
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
-    let platform1 = this.add.rectangle(400, 900, 200, 20, 0x654321);
-    this.physics.add.existing(platform1, true);
-    platforms.add(platform1);
-
-    let platform2 = this.add.rectangle(60, 760, 200, 20, 0x654321);
-    this.physics.add.existing(platform2, true);
-    platforms.add(platform2);
-
-    let platform3 = this.add.rectangle(500, 600, 200, 20, 0x654321);
-    this.physics.add.existing(platform3, true);
-    platforms.add(platform3);
-
-    let platform4 = this.add.rectangle(200, 460, 150, 20, 0x654321);
-    this.physics.add.existing(platform4, true);
-    platforms.add(platform4);
-
-    let platform5 = this.add.rectangle(550, 320, 70, 20, 0x654321);
-    this.physics.add.existing(platform5, true);
-    platforms.add(platform5);
-
-    let platform6 = this.add.rectangle(880, 320, 70, 20, 0x654321);
-    this.physics.add.existing(platform6, true);
-    platforms.add(platform6);
-
-    let platform7 = this.add.rectangle(1210, 320, 70, 20, 0x654321);
-    this.physics.add.existing(platform7, true);
-    platforms.add(platform7);
-
-    let platform8 = this.add.rectangle(200, 160, 200, 20, 0x654321);
-    this.physics.add.existing(platform8, true);
-    platforms.add(platform8);
-
-    let platform9 = this.add.rectangle(1540, 320, 70, 20, 0x654321);
-    this.physics.add.existing(platform9, true);
-    platforms.add(platform9);
-
-    let platform10 = this.add.rectangle(1800, 480, 100, 20, 0x654321);
-    this.physics.add.existing(platform10, true);
-    platforms.add(platform10);
-
-    let platform11 = this.add.rectangle(1780, 160, 70, 20, 0x654321);
-    this.physics.add.existing(platform11, true);
-    platforms.add(platform11);
-
-    let platform12 = this.add.rectangle(2050, 120, 200, 20, 0x654321);
-    this.physics.add.existing(platform12, true);
-    platforms.add(platform12);
+    createWoodPlatform.call(this, 400, 900, 200, 20);
+    createWoodPlatform.call(this, 60, 760, 200, 20);
+    createWoodPlatform.call(this, 500, 600, 200, 20);
+    createWoodPlatform.call(this, 200, 460, 150, 20);
+    createWoodPlatform.call(this, 550, 320, 80, 20);
+    createWoodPlatform.call(this, 880, 320, 80, 20);
+    createWoodPlatform.call(this, 1210, 320, 80, 20);
+    createWoodPlatform.call(this, 200, 160, 200, 20);
+    createWoodPlatform.call(this, 1540, 320, 80, 20);
+    createWoodPlatform.call(this, 1800, 480, 100, 20);
+    createWoodPlatform.call(this, 1780, 160, 80, 20);
+    createWoodPlatform.call(this, 2050, 120, 200, 20);
+    createWoodPlatform.call(this, 2390, 650, 150, 20);
+    createWoodPlatform.call(this, 1715 + 100, 800 + 10, 200, 20);
+    createWoodPlatform.call(this, 2910 + 16, 115, 200, 20);
+    createWoodPlatform.call(this, 2828 + 16, 905 - 10, 32, 20);
+    createWoodPlatform.call(this, 2700 + 16, 768 - 10, 32, 20);
+    createWoodPlatform.call(this, 2828 + 16, 640 - 10, 32, 20);
+    createWoodPlatform.call(this, 2700 + 16, 512 - 10, 32, 20);
+    createWoodPlatform.call(this, 2828 + 16, 384 - 10, 32, 20);
+    createWoodPlatform.call(this, 2700 + 16, 256 - 10, 32, 20);
 
     let platform13 = this.add.rectangle(1368, 963, 111, 1, 0x0).setOrigin(0, 0);
     this.physics.add.existing(platform13, true);
@@ -167,45 +149,9 @@ window.onload = function() {
     this.physics.add.existing(platform15, true);
     platforms.add(platform15);
 
-    let platform16 = this.add.rectangle(1715, 800, 200, 20, 0x654321).setOrigin(0, 0);
-    this.physics.add.existing(platform16, true);
-    platforms.add(platform16);
-
-    let platform17 = this.add.rectangle(2860, 1056, 500, 950, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform17, true);
-    platforms.add(platform17);
-
-    let platform18 = this.add.rectangle(2828, 896, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform18, true);
-    platforms.add(platform18);
-
-    let platform19 = this.add.rectangle(2390, 650, 150, 20, 0x654321);
-    this.physics.add.existing(platform19, true);
-    platforms.add(platform19);
-
-    let platform23 = this.add.rectangle(2700, 768, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform23, true);
-    platforms.add(platform23);
-
-    let platform20 = this.add.rectangle(2828, 640, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform20, true);
-    platforms.add(platform20);
-
-    let platform21 = this.add.rectangle(2700, 512, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform21, true);
-    platforms.add(platform21);
-
-    let platform22 = this.add.rectangle(2828, 384, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform22, true);
-    platforms.add(platform22);
-
-    let platform24 = this.add.rectangle(2700, 256, 32, 20, 0xC0C0C0).setOrigin(0, 1);
-    this.physics.add.existing(platform24, true);
-    platforms.add(platform24);
-
 
     // Joueur
-    player = this.physics.add.sprite(200, 1000, 'player');
+    player = this.physics.add.sprite(2700, 120, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
@@ -309,7 +255,23 @@ window.onload = function() {
     }
 
     if (Phaser.Input.Keyboard.JustDown(keys.jump) && player.body.touching.down) {
-      player.body.setVelocityY(-330);
+      // Début du saut
+      isJumping = true;
+      jumpVelocity = -200; // Vélocité initiale (saut court)
+      player.body.setVelocityY(jumpVelocity);
+    }
+
+    if (keys.jump.isDown && isJumping && player.body.velocity.y <= 0) {
+      // Tant que la touche est maintenue et que le joueur monte
+      if (jumpVelocity > -270) { // Limite à -330 (saut max actuel)
+        jumpVelocity -= 5; // Augmente la vélocité progressivement (ajuste cette valeur)
+        player.body.setVelocityY(jumpVelocity);
+      }
+    }
+
+    if (Phaser.Input.Keyboard.JustUp(keys.jump)) {
+      // Relâchement de la touche
+      isJumping = false;
     }
 
     if (player.body.velocity.x < 0) {
@@ -532,5 +494,44 @@ window.onload = function() {
     F : Interagir
   `;
     document.body.appendChild(controls);
+  }
+
+  function createWoodPlatform(x, y, width, height) {
+    const tileSize = 20; // Taille de chaque tuile (20x20)
+
+    if (width <= tileSize * 2) {
+      // Plateformes très courtes : juste les bords
+      const leftEdge = this.add.sprite(x - tileSize / 2, y, 'wood_left').setOrigin(0.5, 0.5);
+      this.physics.add.existing(leftEdge, true);
+      platforms.add(leftEdge);
+      const rightEdge = this.add.sprite(x + tileSize / 2, y, 'wood_right').setOrigin(0.5, 0.5);
+      this.physics.add.existing(rightEdge, true);
+      platforms.add(rightEdge);
+      leftEdge.body.setSize(tileSize, height);
+      rightEdge.body.setSize(tileSize, height);
+    } else {
+      // Plateformes plus longues : bords + milieu
+      const leftEdge = this.add.sprite(x - width / 2 + tileSize / 2, y, 'wood_left').setOrigin(0.5, 0.5);
+      this.physics.add.existing(leftEdge, true);
+      platforms.add(leftEdge);
+
+      const rightEdge = this.add.sprite(x + width / 2 - tileSize / 2, y, 'wood_right').setOrigin(0.5, 0.5);
+      this.physics.add.existing(rightEdge, true);
+      platforms.add(rightEdge);
+
+      const middleWidth = width - tileSize; // Ajusté pour combler l’écart
+      const middle = this.add.tileSprite(x, y, middleWidth, height, 'wood_middle').setOrigin(0.5, 0.5);
+      this.physics.add.existing(middle, true);
+      platforms.add(middle);
+
+      // Ajuster les hitboxes pour correspondre aux tailles visuelles
+      leftEdge.body.setSize(tileSize, height);
+      rightEdge.body.setSize(tileSize, height);
+      middle.body.setSize(middleWidth, height);
+
+      // Positionner les bords pour qu’ils se touchent exactement
+      leftEdge.x = x - (width - tileSize) / 2 - tileSize / 2;
+      rightEdge.x = x + (width - tileSize) / 2 + tileSize / 2;
+    }
   }
 };
