@@ -1,9 +1,44 @@
 window.onload = function() {
+  // Détection des appareils mobiles
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  if (isMobile) {
+    const mobileMessage = document.createElement('div');
+    mobileMessage.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #57160d;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      font-size: 4vw;
+      padding: 5vw;
+      box-sizing: border-box;
+      overflow: hidden;
+    `;
+    mobileMessage.innerHTML = `
+      <div>
+        <img src="../assets/Sprite.gif" alt="Sprite animé">
+        <h1>Désolé !</h1>
+        <p>Ce portfolio interactif est conçu pour être joué sur un ordinateur avec un clavier.<br>
+        Il n’est pas compatible avec les téléphones ou tablettes pour le moment.<br>
+        Merci de le consulter depuis un PC !<br>
+        En attendant tu peux jeter un oeil à mon <a href="https://louanne-deabreu.fr">site vitrine</a></p>
+      </div>
+    `;
+    document.body.appendChild(mobileMessage);
+    return; // Arrête l'exécution du reste du code
+  }
+
+  // Si pas mobile, continue avec le jeu
   const config = {
     type: Phaser.AUTO,
     width: window.innerWidth,
     height: window.innerHeight,
-    // backgroundColor: '#87CEEB',
     physics: {
       default: 'arcade',
       arcade: {
@@ -256,10 +291,12 @@ window.onload = function() {
       down: Phaser.Input.Keyboard.KeyCodes.S,
       right: Phaser.Input.Keyboard.KeyCodes.D,
       jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
-      interact: Phaser.Input.Keyboard.KeyCodes.A
+      interact: Phaser.Input.Keyboard.KeyCodes.F
     });
 
     createPortfolioModal();
+    createIntroModal();
+    createControlsDisplay();
   }
 
   function update() {
@@ -403,5 +440,97 @@ window.onload = function() {
     } else {
       display.src = '';
     }
+  }
+
+  function createIntroModal() {
+    const introModal = document.createElement('div');
+    introModal.id = 'introModal';
+    introModal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+
+    const content = document.createElement('div');
+    content.style.cssText = `
+    font-family: "Poppins", Arial;
+    font-weight: semibold;
+    border: 5px solid #280505;
+    color: white;
+    position: relative;
+    width: 60%;
+    max-height: 80%;
+    background: #57160d;
+    padding: 20px;
+    text-align: center;
+    overflow-y: auto;
+  `;
+
+    const title = document.createElement('h2');
+    title.textContent = 'Bienvenue dans mon Portfolio !';
+
+    const text = document.createElement('p');
+    text.innerHTML = `
+    Salut ! Bienvenue chez moi ! J'ai éparpillé les éléments de mon portfolio un peu partout, si tu veux les voir je te laisse fouiller !<br>
+    - Utilise <strong>Q</strong> et <strong>D</strong> pour te déplacer à gauche ou à droite.<br>
+    - Appuie sur <strong>ESPACE</strong> pour sauter.<br>
+    - Approche toi des éléments du décor et utilise <strong>F</strong> pour interagir.<br>
+    - Explore pour découvrir mes projets (PDF, images, vidéos) !<br><br>
+    Pour avoir plus d'info, rend toi sur mon site : <a href="https://www.louanne-deabreu.fr">https://www.louanne-deabreu.fr</a><br>
+    Et si tu veux me retrouver sur GitHub c'est <a href="https://github.com/deabreul/Portfolio">par ici !</a><br>
+  `;
+
+    const startButton = document.createElement('button');
+    startButton.textContent = 'Commencer';
+    startButton.style.cssText = `
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  `;
+
+    content.appendChild(title);
+    content.appendChild(text);
+    content.appendChild(startButton);
+    introModal.appendChild(content);
+    document.body.appendChild(introModal);
+
+    startButton.onclick = () => {
+      introModal.style.display = 'none';
+    };
+  }
+
+  function createControlsDisplay() {
+    const controls = document.createElement('div');
+    controls.id = 'controlsDisplay';
+    controls.style.cssText = `
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 1000;
+  `;
+    controls.innerHTML = `
+    <strong>Contrôles :</strong><br>
+    Q : Gauche<br>
+    D : Droite<br>
+    Espace : Sauter<br>
+    F : Interagir
+  `;
+    document.body.appendChild(controls);
   }
 };
