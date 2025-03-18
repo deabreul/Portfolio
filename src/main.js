@@ -65,7 +65,6 @@ window.onload = function() {
   let panels;
   let keys;
   let portfolioData;
-  let jumpStartTime = 0;
   let isJumping = false;
 
   function preload() {
@@ -163,7 +162,6 @@ window.onload = function() {
 
     // Animations
     this.anims.create({
-      key: 'idle',
       key: 'idle',
       frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
       frameRate: 10,
