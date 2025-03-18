@@ -1,5 +1,5 @@
 [
   { "name": "CV", "path": "../assets/DeAbreu_Louanne_CV.pdf", "type": "pdf", "sprite": "sign", "position": [600, 1000] },
-  { "name": "Image", "path": "../assets/art.png", "type": "image", "sprite": "sign", "position": [500, 550] },
-  { "name": "YouTube", "path": "https://youtube.com/embed/abc", "type": "youtube", "sprite": "play", "position": [1200, 460] }
+  { "name": "Photomontage", "path": "../assets/art.png", "type": "image", "sprite": "fish", "position": [1368, 963] },
+  { "name": "Animation", "path": "https://youtube.com/embed/abc", "type": "youtube", "sprite": "sign", "position": [1200, 460] }
 ]

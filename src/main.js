@@ -8,7 +8,7 @@ window.onload = function() {
       default: 'arcade',
       arcade: {
         gravity: { y: 300 },
-        debug: true
+        debug: false
       }
     },
     scene: {
@@ -32,13 +32,15 @@ window.onload = function() {
   let portfolioData;
 
   function preload() {
-    this.load.image('paper', 'https://static.vecteezy.com/system/resources/previews/031/426/665/non_2x/pastel-brown-notepaper-journal-sticker-with-transparent-background-png.png');
-    this.load.image('sign', 'https://lh4.googleusercontent.com/proxy/4xh7BjoM3cSL-zrK84NK75ff5fUCiHl_TzOEN2syGLFOl8OUhrc6gjLAB-ZtjwQgiVpsJ3dCtVFg6EvVJct9oeYv0mikekqpdvnNAQ');
-    this.load.image('frame', '../assets/placeholder.jpg'); // Image unique pour "image" (à créer)
-    this.load.image('play', '../assets/placeholder.jpg'); // Image unique pour "youtube" (à créer)
+    // Important
     this.load.spritesheet('player', '../assets/player_spritesheet3.png', { frameWidth: 64, frameHeight: 64 });
     this.load.json('portfolio', '../assets/portfolio.json');
 
+    // Visuel interactif
+    this.load.image('sign', '../assets/panneau.png');
+    this.load.image('fish', '../assets/fish.png');
+
+    //Visuel
     this.load.image('house', '../assets/house.png');
 
     // Fonds parallax
@@ -52,21 +54,21 @@ window.onload = function() {
   }
 
   function create() {
-    this.physics.world.setBounds(0, 0, 4000, 1080);
-    this.cameras.main.setBounds(0, 0, 4000, 1080);
+    this.physics.world.setBounds(0, 0, 3000, 1080);
+    this.cameras.main.setBounds(0, 0, 3000, 1080);
 
     // Fonds parallax
     const gameHeight = 1080; // Hauteur du monde
-    background = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'background').setOrigin(0.5, 0.5).setDepth(-7);
-    second = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'second').setOrigin(0.5, 0.5).setDepth(-6);
-    third = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'third').setOrigin(0.5, 0.5).setDepth(-5);
-    fourth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fourth').setOrigin(0.5, 0.5).setDepth(-4);
-    fifth = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-3);
-    foreground = this.add.tileSprite(2000, gameHeight / 2, 4000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-2);
+    background = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'background').setOrigin(0.5, 0.5).setDepth(-7);
+    second = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'second').setOrigin(0.5, 0.5).setDepth(-6);
+    third = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'third').setOrigin(0.5, 0.5).setDepth(-5);
+    fourth = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'fourth').setOrigin(0.5, 0.5).setDepth(-4);
+    fifth = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'fifth').setOrigin(0.5, 0.5).setDepth(-3);
+    foreground = this.add.tileSprite(1500, gameHeight / 2, 3000, gameHeight, 'foreground').setOrigin(0.5, 0.5).setDepth(-2);
 
     // Plateformes
     platforms = this.physics.add.staticGroup();
-    let ground = this.add.rectangle(2000, 1080, 4000, 48, 0x654321); // Sol au bas du monde
+    let ground = this.add.rectangle(1500, 1080, 3000, 48, 0x654321); // Sol au bas du monde
     this.physics.add.existing(ground, true);
     platforms.add(ground);
 
@@ -110,8 +112,65 @@ window.onload = function() {
     this.physics.add.existing(platform10, true);
     platforms.add(platform10);
 
+    let platform11 = this.add.rectangle(1780, 160, 70, 20, 0x654321);
+    this.physics.add.existing(platform11, true);
+    platforms.add(platform11);
+
+    let platform12 = this.add.rectangle(2050, 120, 200, 20, 0x654321);
+    this.physics.add.existing(platform12, true);
+    platforms.add(platform12);
+
+    let platform13 = this.add.rectangle(1368, 963, 111, 1, 0x0).setOrigin(0, 0);
+    this.physics.add.existing(platform13, true);
+    platforms.add(platform13);
+
+    let platform14 = this.add.rectangle(1135, 748, 230, 1, 0x00000000).setOrigin(0, 0);
+    this.physics.add.existing(platform14, true);
+    platforms.add(platform14);
+
+    let platform15 = this.add.rectangle(1370, 700, 75, 1, 0x654321).setOrigin(0, 0);
+    this.physics.add.existing(platform15, true);
+    platforms.add(platform15);
+
+    let platform16 = this.add.rectangle(1715, 800, 200, 20, 0x654321).setOrigin(0, 0);
+    this.physics.add.existing(platform16, true);
+    platforms.add(platform16);
+
+    let platform17 = this.add.rectangle(2860, 1056, 500, 950, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform17, true);
+    platforms.add(platform17);
+
+    let platform18 = this.add.rectangle(2828, 896, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform18, true);
+    platforms.add(platform18);
+
+    let platform19 = this.add.rectangle(2390, 650, 100, 20, 0x654321);
+    this.physics.add.existing(platform19, true);
+    platforms.add(platform19);
+
+    let platform23 = this.add.rectangle(2700, 768, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform23, true);
+    platforms.add(platform23);
+
+    let platform20 = this.add.rectangle(2828, 640, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform20, true);
+    platforms.add(platform20);
+
+    let platform21 = this.add.rectangle(2700, 512, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform21, true);
+    platforms.add(platform21);
+
+    let platform22 = this.add.rectangle(2828, 384, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform22, true);
+    platforms.add(platform22);
+
+    let platform24 = this.add.rectangle(2700, 256, 32, 20, 0xC0C0C0).setOrigin(0, 1);
+    this.physics.add.existing(platform24, true);
+    platforms.add(platform24);
+
+
     // Joueur
-    player = this.physics.add.sprite(200, 1000, 'player');
+    player = this.physics.add.sprite(1780, 140, 'player');
     player.body.setCollideWorldBounds(true);
     player.body.setBounce(0);
     this.physics.add.collider(player, platforms);
@@ -126,7 +185,7 @@ window.onload = function() {
       key: 'idle',
       frames: this.anims.generateFrameNumbers('player', { start: 1, end: 1 }),
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
 
     this.anims.create({
@@ -145,18 +204,22 @@ window.onload = function() {
 
     player.anims.play('idle', true);
 
+    // Détection des clics pour afficher les coordonnées
+    this.input.on('pointerdown', (pointer) => {
+      const worldX = pointer.worldX; // Coordonnée x dans le monde
+      const worldY = pointer.worldY; // Coordonnée y dans le monde
+      console.log(`Clic à : x = ${worldX}, y = ${worldY}`);
+    });
+
     // Panneaux avec positions depuis le JSON
     portfolioData = this.cache.json.get('portfolio');
     if (portfolioData) {
       panels = this.physics.add.staticGroup();
       portfolioData.forEach((item) => {
         let [x, y] = item.position; // Récupère x et y depuis le JSON
-        let panel = this.add.sprite(x, y, item.sprite).setScale(0.2);
+        let panel = this.add.sprite(x, y, item.sprite);
         this.physics.add.existing(panel, true);
         panels.add(panel);
-        if (item.type === 'pdf') {
-          this.add.sprite(x, y - 10, 'paper').setScale(0.05);
-        }
       });
     } else {
       console.error("Erreur : portfolio.json n'a pas été chargé correctement.");
